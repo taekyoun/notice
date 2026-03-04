@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>사내 공지 포털</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel-2: rgba(255,255,255,.10);
+      --text: #e8eefc;
+      --muted: rgba(232,238,252,.70);
+      --line: rgba(232,238,252,.14);
+      --accent: #8ab4ff;
+      --ok: #6ee7b7;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius: 16px;
+      --radius2: 22px;
+      --max: 1100px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 450px at 10% -10%, rgba(138,180,255,.35), transparent 55%),
+        radial-gradient(900px 450px at 90% 0%, rgba(110,231,183,.18), transparent 55%),
+        radial-gradient(900px 450px at 50% 110%, rgba(251,113,133,.12), transparent 60%),
+        var(--bg);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 24px; }
+
+    /* Top Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(11,18,32,.85), rgba(11,18,32,.65));
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .logo {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(138,180,255,.95), rgba(110,231,183,.85));
+      box-shadow: 0 10px 26px rgba(138,180,255,.18);
+    }
+    .menu {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .chip {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      color: var(--muted);
+      transition: .15s ease;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .chip:hover { transform: translateY(-1px); background: rgba(255,255,255,.07); color: var(--text); }
+    .chip.primary { border-color: rgba(138,180,255,.35); color: var(--text); background: rgba(138,180,255,.10); }
+
+    /* NEW: auth buttons in nav */
+    .auth {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .chip.ghost {
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+    .chip.accent {
+      border-color: rgba(138,180,255,.45);
+      background: rgba(138,180,255,.12);
+      color: var(--text);
+    }
+    .chip.accent:hover { background: rgba(138,180,255,.18); }
+
+    /* Hero */
+    .hero {
+      margin-top: 26px;
+      padding: 28px;
+      border-radius: var(--radius2);
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 18px;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.25;
+      letter-spacing: -.2px;
+    }
+    .hero p { margin: 0; color: var(--muted); line-height: 1.6; }
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      font-weight: 700;
+      transition: .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .btn.accent { border-color: rgba(138,180,255,.45); background: rgba(138,180,255,.12); }
+    .btn.accent:hover { background: rgba(138,180,255,.18); }
+
+    /* Grid cards */
+    .grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+    }
+    .card {
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+      padding: 16px;
+      min-height: 140px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 16px; }
+    .meta { color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .dot.ok { background: var(--ok); }
+    .dot.warn { background: var(--warn); }
+    .dot.danger { background: var(--danger); }
+
+    /* list */
+    .list { margin-top: 10px; display: grid; gap: 10px; }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .item strong { font-size: 14px; }
+    .item small { color: var(--muted); }
+
+    /* NEW: auth panel */
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .auth-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .input {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline: none;
+    }
+    .input::placeholder { color: rgba(232,238,252,.45); }
+    .auth-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .link {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 13px;
+      opacity: .95;
+    }
+    .link:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 920px) {
+      .col-6, .col-4, .col-8 { grid-column: span 12; }
+      .hero { padding: 20px; }
+      .hero h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" th:href="@{/}">
+        <span class="logo" aria-hidden="true"></span>
+        <span>사내 공지 포털</span>
+      </a>
+
+      <nav class="menu" aria-label="주 메뉴">
+        <a class="chip primary" th:href="@{/}">홈</a>
+        <a class="chip" th:href="@{/boards}">게시판</a>
+        <a class="chip" href="#" onclick="alert('추후: 부서/카테고리 필터'); return false;">부서</a>
+        <a class="chip" href="#" onclick="alert('추후: 로그인/권한'); return false;">관리</a>
+      </nav>
+
+        <!-- 로그인 안된 상태 -->
+      <div sec:authorize="isAnonymous()">
+        <a class="chip ghost" th:href="@{/login}">로그인</a>
+        <a class="chip accent" th:href="@{/signup}">회원가입</a>
+      </div>
+
+      <!-- 로그인 상태 -->
+      <div sec:authorize="isAuthenticated()">
+        <span class="chip">
+          <span sec:authentication="name"></span> 님
+        </span>
+
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+          <button class="chip ghost" type="submit">로그아웃</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero" aria-label="요약">
+      <h1>공지·업무 요청·정책 문서를 한 곳에서 관리하세요</h1>
+      <p>
+        빠르게 공지를 확인하고, 중요한 글은 고정(PIN)하거나 분류(부서/카테고리)하여 공유할 수 있는
+        기본형 사내 게시판 포털 레이아웃입니다.
+      </p>
+      <div class="hero-actions">
+        <a class="btn accent" th:href="@{/boards}">
+          게시판으로 이동 →
+        </a>
+        <a class="btn" th:href="@{/boards/new}">
+          글 작성(예정)
+        </a>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="pill"><span class="dot ok"></span> 시스템 정상</span>
+        <span class="pill"><span class="dot warn"></span> 이번 주 점검 예정</span>
+        <span class="pill"><span class="dot danger"></span> 보안 공지 확인</span>
+      </div>
+    </section>
+
+    <!-- Content grid -->
+    <section class="grid" aria-label="홈 콘텐츠">
+      <article class="card col-8">
+        <h3>최근 공지</h3>
+        <div class="list">
+          <a class="item" th:href="@{/boards}">
+            <div>
+              <strong>[공지] 사내 VPN 정책 업데이트</strong><br/>
+              <small>보안팀 · 2026-03-02 · 조회 128</small>
+            </div>
+            <small>→</small>
+          </a>
+          <a class="item" th:href="@{/boards}">
+            <div>
+              <strong>[안내] 3월 정기 점검 일정</strong><br/>
+              <small>인프라팀 · 2026-03-01 · 조회 94</small>
+            </div>
+            <small>→</small>
+          </a>
+          <a class="item" th:href="@{/boards}">
+            <div>
+              <strong>[모집] 사내 스터디(자바/스프링) 참가자</strong><br/>
+              <small>HR · 2026-02-28 · 조회 210</small>
+            </div>
+            <small>→</small>
+          </a>
+        </div>
+        <p class="meta" style="margin-top:12px;"></p>
+      </article>
+
+      <aside class="card col-4">
+        <h3>빠른 링크</h3>
+        <div class="list">
+          <a class="item" th:href="@{/boards}">
+            <div>
+              <strong>게시판 전체 보기</strong><br/>
+              <small>공지/업무요청/정책</small>
+            </div>
+            <small>→</small>
+          </a>
+          <a class="item" href="#" onclick="alert('추후: FAQ'); return false;">
+            <div>
+              <strong>FAQ</strong><br/>
+              <small>자주 묻는 질문</small>
+            </div>
+            <small>→</small>
+          </a>
+          <a class="item" href="#" onclick="alert('추후: 연락처/조직도'); return false;">
+            <div>
+              <strong>조직도/연락처</strong><br/>
+              <small>내선/부서 정보</small>
+            </div>
+            <small>→</small>
+          </a>
+        </div>
+      </aside>
+
+   
+
+      <article class="card col-12">
+        <h3>운영 가이드</h3>
+        <p class="meta"></p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

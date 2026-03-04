@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>게시판 | 사내 공지 포털</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel-2: rgba(255,255,255,.10);
+      --text: #e8eefc;
+      --muted: rgba(232,238,252,.70);
+      --line: rgba(232,238,252,.14);
+      --accent: #8ab4ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius: 16px;
+      --max: 1100px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 450px at 10% -10%, rgba(138,180,255,.35), transparent 55%),
+        radial-gradient(900px 450px at 90% 0%, rgba(110,231,183,.18), transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 24px; }
+
+    /* Top Nav (same as index) */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(11,18,32,.85), rgba(11,18,32,.65));
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .logo {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(138,180,255,.95), rgba(110,231,183,.85));
+      box-shadow: 0 10px 26px rgba(138,180,255,.18);
+    }
+    .menu { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .chip {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      color: var(--muted);
+      transition: .15s ease;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .chip:hover { transform: translateY(-1px); background: rgba(255,255,255,.07); color: var(--text); }
+    .chip.primary { border-color: rgba(138,180,255,.35); color: var(--text); background: rgba(138,180,255,.10); }
+
+    /* Header */
+    .head {
+      margin-top: 22px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .head h1 { margin: 0; font-size: 22px; letter-spacing: -.2px; }
+    .sub { color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+    /* Toolbar */
+    .toolbar {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 10px 26px rgba(0,0,0,.18);
+    }
+    .input, .select {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      outline: none;
+      min-width: 180px;
+    }
+    .input::placeholder { color: rgba(232,238,252,.45); }
+    .btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .btn.accent { border-color: rgba(138,180,255,.45); background: rgba(138,180,255,.12); }
+    .btn.accent:hover { background: rgba(138,180,255,.18); }
+
+    /* Table */
+    .table-wrap {
+      margin-top: 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px;
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(232,238,252,.08);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+    tbody tr:hover { background: rgba(255,255,255,.04); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .pin { border-color: rgba(251,191,36,.40); background: rgba(251,191,36,.12); color: rgba(255,255,255,.90); }
+    .dept { border-color: rgba(138,180,255,.35); background: rgba(138,180,255,.10); }
+    .title {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .title a { font-weight: 900; }
+    .title small { color: var(--muted); }
+
+    /* Footer note */
+    .note { margin-top: 12px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+    @media (max-width: 760px) {
+      .hide-sm { display: none; }
+      .input, .select { min-width: 140px; flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" th:href="@{/}">
+        <span class="logo" aria-hidden="true"></span>
+        <span>사내 공지 포털</span>
+      </a>
+
+      <nav class="menu" aria-label="주 메뉴">
+        <a class="chip" th:href="@{/}">홈</a>
+        <a class="chip primary" th:href="@{/boards}">게시판</a>
+        <a class="chip" href="#" onclick="alert('추후: 부서/카테고리'); return false;">부서</a>
+        <a class="chip" href="#" onclick="alert('추후: 관리자'); return false;">관리</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="head">
+      <div>
+        <h1>게시판</h1>
+        <div class="sub">공지/업무요청/정책 문서를 목록으로 확인합니다.</div>
+      </div>
+      <button class="btn accent" type="button" onclick="location.href='/boards/new';">+ 새 글</button>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="toolbar" aria-label="검색/필터">
+      <select class="select" aria-label="카테고리">
+        <option value="">전체 카테고리</option>
+        <option>공지</option>
+        <option>업무요청</option>
+        <option>정책</option>
+        <option>장애/점검</option>
+      </select>
+
+      <select class="select" aria-label="부서">
+        <option value="">전체 부서</option>
+        <option>인프라팀</option>
+        <option>보안팀</option>
+        <option>개발팀</option>
+        <option>HR</option>
+      </select>
+
+      <input class="input" type="search" placeholder="제목/내용 검색" aria-label="검색" />
+
+      <button class="btn" type="button" onclick="alert('추후: 검색 적용');">검색</button>
+      <button class="btn" type="button" onclick="alert('추후: 초기화');">초기화</button>
+    </section>
+
+    <!-- Table -->
+    <section class="table-wrap" aria-label="게시글 목록">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 90px;">번호</th>
+            <th>제목</th>
+            <th class="hide-sm" style="width: 140px;">작성자</th>
+            <th style="width: 140px;">작성일</th>
+          </tr>
+        </thead>
+
+        
+   
+          <tbody>
+            <tr th:each="board : ${boards}">
+                <td><span class="badge pin" th:text="${board.id}"></span></td>
+                <td>
+                <div class="title">
+                    <a th:href="@{/boards/{id}(id=${board.id})}" th:text="${board.name}"></a>
+                    <small></small>
+                </div>
+                </td>
+                <td class="hide-sm"><span class="badge dept" th:text="${board.poster}"></span></td>
+                <td th:text="${#temporals.format(board.createTime, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>  
+            </tr>
+          </tbody>
+        
+        <!-- <tbody>
+          <tr>
+            <td><span class="badge pin">PIN</span></td>
+            <td>
+              <div class="title">
+                <a th:href="@{/boards}">[필독] 사내 보안 정책 (최신)</a>
+                <small>첨부: 보안_가이드_v3.pdf · 담당: 보안팀</small>
+              </div>
+            </td>
+            <td class="hide-sm"><span class="badge dept">보안팀</span></td>
+            <td>2026-03-02</td>
+            <td class="hide-sm">128</td>
+          </tr>
+
+          <tr>
+            <td><span class="badge">공지</span></td>
+            <td>
+              <div class="title">
+                <a th:href="@{/boards}">3월 정기 점검 일정 안내</a>
+                <small>점검 시간: 03/05 02:00~04:00</small>
+              </div>
+            </td>
+            <td class="hide-sm"><span class="badge dept">인프라팀</span></td>
+            <td>2026-03-01</td>
+            <td class="hide-sm">94</td>
+          </tr>
+
+          <tr>
+            <td><span class="badge">업무요청</span></td>
+            <td>
+              <div class="title">
+                <a th:href="@{/boards}">[요청] 신규 입사자 계정 생성 요청</a>
+                <small>요청자: HR · 마감: 03/03</small>
+              </div>
+            </td>
+            <td class="hide-sm"><span class="badge dept">HR</span></td>
+            <td>2026-02-28</td>
+            <td class="hide-sm">210</td>
+          </tr>
+
+          <tr>
+            <td><span class="badge">정책</span></td>
+            <td>
+              <div class="title">
+                <a th:href="@{/boards}">회의록 작성 규칙(템플릿 포함)</a>
+                <small>템플릿: meeting_template.md</small>
+              </div>
+            </td>
+            <td class="hide-sm"><span class="badge dept">개발팀</span></td>
+            <td>2026-02-27</td>
+            <td class="hide-sm">76</td>
+          </tr>
+        </tbody> -->
+      </table>
+    </section>
+
+    <p class="note">
+      연동 시 최소 필드 권장: <b>id, category, title, department, createdAt, viewCount, pinned</b>.
+      페이징은 <code>page</code>/<code>size</code> 파라미터로 처리하고, 목록은 <code>th:each</code>로 렌더링하면 됩니다.
+    </p>
+  </main>
+</body>
+</html>

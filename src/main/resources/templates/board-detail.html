@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title th:text="${board.name} + ' | 사내 공지 포털'">게시글 | 사내 공지 포털</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel-2: rgba(255,255,255,.10);
+      --text: #e8eefc;
+      --muted: rgba(232,238,252,.70);
+      --line: rgba(232,238,252,.14);
+      --accent: #8ab4ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --radius: 16px;
+      --max: 1100px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 450px at 10% -10%, rgba(138,180,255,.35), transparent 55%),
+        radial-gradient(900px 450px at 90% 0%, rgba(110,231,183,.18), transparent 55%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 24px; }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(11,18,32,.85), rgba(11,18,32,.65));
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .2px; }
+    .logo {
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(138,180,255,.95), rgba(110,231,183,.85));
+      box-shadow: 0 10px 26px rgba(138,180,255,.18);
+    }
+    .menu { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .chip {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: 999px;
+      color: var(--muted);
+      transition: .15s ease;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .chip:hover { transform: translateY(-1px); background: rgba(255,255,255,.07); color: var(--text); }
+    .chip.primary { border-color: rgba(138,180,255,.35); color: var(--text); background: rgba(138,180,255,.10); }
+
+    .panel {
+      margin-top: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-head {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid rgba(232,238,252,.10);
+      background: rgba(255,255,255,.02);
+    }
+    .title { margin: 0; font-size: 22px; letter-spacing: -.2px; font-weight: 900; }
+    .meta {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .dept { border-color: rgba(138,180,255,.35); background: rgba(138,180,255,.10); color: rgba(255,255,255,.90); }
+    .id { border-color: rgba(110,231,183,.35); background: rgba(110,231,183,.10); color: rgba(255,255,255,.90); }
+
+    .panel-body { padding: 18px; }
+    .content {
+      line-height: 1.8;
+      color: rgba(232,238,252,.92);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .actions {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-top: 1px solid rgba(232,238,252,.10);
+      background: rgba(255,255,255,.02);
+    }
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font-weight: 800;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .btn.accent { border-color: rgba(138,180,255,.45); background: rgba(138,180,255,.12); }
+    .btn.danger { border-color: rgba(248,113,113,.45); background: rgba(248,113,113,.10); }
+
+    .muted { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" th:href="@{/}">
+        <span class="logo" aria-hidden="true"></span>
+        <span>사내 공지 포털</span>
+      </a>
+
+      <nav class="menu" aria-label="주 메뉴">
+        <a class="chip" th:href="@{/}">홈</a>
+        <a class="chip primary" th:href="@{/boards}">게시판</a>
+        <a class="chip" href="#" onclick="alert('추후: 부서/카테고리'); return false;">부서</a>
+        <a class="chip" href="#" onclick="alert('추후: 관리자'); return false;">관리</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <header class="panel-head">
+        <h1 class="title" th:text="${board.name}">제목</h1>
+
+        <div class="meta">
+          <span class="badge id">#<span th:text="${board.id}">0</span></span>
+          <span class="badge dept" th:text="${board.poster}">작성자</span>
+          <span class="badge">
+            작성일:
+            <span th:text="${#temporals.format(board.createTime, 'yyyy-MM-dd HH:mm')}">2026-03-03 14:25</span>
+          </span>
+          <!-- viewCount 같은 게 있으면 사용 -->
+          <!-- <span class="badge">조회 <span th:text="${board.viewCount}">0</span></span> -->
+        </div>
+      </header>
+
+      <div class="panel-body">
+        <div class="content" th:text="${board.content}">
+본문 내용
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="btns">
+          <a class="btn" th:href="@{/boards}">← 목록</a>
+
+          <a class="btn accent" th:href="@{/boards/{id}/edit(id=${board.id})}">수정</a>
+        </div>
+
+     
+          <button class="btn danger delete-btn" type="submit" th:data-id="${board.id}">삭제</button>
+
+           <script>
+                document.querySelectorAll(".delete-btn").forEach(btn =>{
+                    btn.addEventListener("click" , function(){
+                        const id = this.dataset.id;
+                        console.log(id)
+                        fetch('/boards/' + id, {
+                            method:'DELETE'
+                        }).then(()=> location.href ='/boards');
+                    });
+                });
+            </script>
+        <div class="muted">첨부/댓글 기능은 추후 확장</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
