@@ -34,3 +34,15 @@ Spring Security 기반 로그인/세션 인증 기능을 포함합니다.
 
 Spring Security의 **세션 기반 인증 방식**을 사용했습니다.
 
+
+## 화면
+
+### 메인 화면
+![main](docs/main.png)
+
+### 로그인
+![login](docs/login.png)
+
+### 게시판
+![board](docs/board.png)
+
