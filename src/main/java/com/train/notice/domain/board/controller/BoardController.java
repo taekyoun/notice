@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +27,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/boards")
-    public String getBoards(Model model) {
-        Page<BoardDto> boards = boardService.readBoardList(0,10);
+    public String getBoards(Model model, @RequestParam(defaultValue = "0") int page) {
+        Page<BoardDto> boards = boardService.readBoardList(page,10);
         model.addAttribute("boards", boards);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("start", Math.max(0,page-2));
+        model.addAttribute("end", Math.min(boards.getTotalPages() -1, page +2));
+        
         return "board";
     }
     

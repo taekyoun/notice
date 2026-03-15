@@ -171,8 +171,7 @@
         </form>
 
         <div class="msg" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-
-   
+        <div class="msg" th:if="${param.error}">로그인이 필요합니다</div>
       </div>
     </section>
   </main>
