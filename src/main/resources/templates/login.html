@@ -170,17 +170,9 @@
           </div>
         </form>
 
-        <!-- (선택) 에러/로그아웃 메시지 표시 -->
-        <div class="msg" th:if="${param.error}">
-          로그인에 실패했습니다. 아이디/비밀번호를 확인해주세요.
-        </div>
-        <div class="msg" th:if="${param.logout}">
-          정상적으로 로그아웃 되었습니다.
-        </div>
+        <div class="msg" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-        <div class="hint">
-          * 데모 UI. 추후 Spring Security 설정(로그인 처리 URL, 실패/성공 핸들러)에 맞춰 경로를 조정하세요.
-        </div>
+   
       </div>
     </section>
   </main>
