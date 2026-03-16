@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.train.notice.Jwt.JwtTokenProvider;
 import com.train.notice.domain.member.entity_dto.MemberDto;
 import com.train.notice.domain.member.service.MemberService;
+import com.train.notice.jwt.JwtTokenProvider;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

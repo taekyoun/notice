@@ -1,4 +1,4 @@
-package com.train.notice.Jwt;
+package com.train.notice.jwt;
 
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAutenticationFilter  extends OncePerRequestFilter{
+public class JwtAuthenticationFilter  extends OncePerRequestFilter{
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;

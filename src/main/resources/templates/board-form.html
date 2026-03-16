@@ -157,11 +157,11 @@
         <input id="name" name="name" class="input" type="text" th:field="*{name}" placeholder="예) 3월 정기 점검 일정 안내" required />
         <div class="help">게시판 목록에 표시되는 제목입니다.</div>
       </div>
-
+<!-- 
       <div class="row">
         <label for="poster">작성자(부서/이름)</label>
         <input id="poster" name="poster" class="input" type="text" th:field="*{poster}" th:placeholder="${poster} " required />
-      </div>
+      </div> -->
 
     
 
@@ -199,14 +199,12 @@
 
             const url = (mode === 'edit') ? `/boards/${id}` : `/boards`;
             const method = (mode === 'edit') ? 'PUT' : 'POST';
-            fetch(url, {
+            const res = await fetch(url, {
                 method: method,
                 body: formData   // 헤더 지정하지 않음!
-            }).then((e) => {
-                if(e.ok){
-                    location.href=e.url
-                }
-            }); 
+              })
+            const redirectUrl = await res.text();
+            location.href =redirectUrl;  
         });
     </script>
   </section>

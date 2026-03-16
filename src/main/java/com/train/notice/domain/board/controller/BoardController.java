@@ -33,7 +33,7 @@ public class BoardController {
         model.addAttribute("currentPage", page);
         model.addAttribute("start", Math.max(0,page-2));
         model.addAttribute("end", Math.min(boards.getTotalPages() -1, page +2));
-        
+
         return "board";
     }
     
@@ -58,11 +58,11 @@ public class BoardController {
         return "board-detail";
     }
 
+    @ResponseBody
     @PostMapping("/boards")
-    public String createBoard(@ModelAttribute BoardDto boardDto){
-        BoardDto board = boardService.createBoard(boardDto);
-        System.out.println(board.getId());
-        return "/boards/" + board.getId();
+    public String createBoard(@ModelAttribute BoardDto boardDto, Authentication authentication){
+        Long id = boardService.createBoard(boardDto, authentication.getName());
+        return "/boards/" + id;
     }
 
     @ResponseBody
@@ -74,8 +74,8 @@ public class BoardController {
     
     @ResponseBody
     @DeleteMapping("/boards/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        boardService.deleteBoard(id);
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long id, Authentication authentication) {
+        boardService.deleteBoard(id,authentication.getName());
         return ResponseEntity.noContent().build();
     }
 

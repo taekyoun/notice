@@ -317,7 +317,7 @@
                     <small></small>
                 </div>
                 </td>
-                <td class="hide-sm"><span class="badge dept" th:text="${board.poster}"></span></td>
+                <td class="hide-sm"><span class="badge dept" th:text="${board.writer.getName()}"></span></td>
                 <td th:text="${#temporals.format(board.createTime, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>  
 

@@ -12,8 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.train.notice.Jwt.JwtAutenticationFilter;
 import com.train.notice.exception.CustomAuthenticationEntryPoint;
+import com.train.notice.jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAutenticationFilter jwtAutenticationFilter;
+    private final JwtAuthenticationFilter jwtAutenticationFilter;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     
     @Bean

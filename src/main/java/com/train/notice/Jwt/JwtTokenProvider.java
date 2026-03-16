@@ -1,4 +1,4 @@
-package com.train.notice.Jwt;
+package com.train.notice.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

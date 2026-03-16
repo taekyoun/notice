@@ -169,7 +169,7 @@
 
         <div class="meta">
           <span class="badge id">#<span th:text="${board.id}">0</span></span>
-          <span class="badge dept" th:text="${board.poster}">작성자</span>
+          <span class="badge dept" th:text="${board.writer.getName()}">작성자</span>
           <span class="badge">
             작성일:
             <span th:text="${#temporals.format(board.createTime, 'yyyy-MM-dd HH:mm')}">2026-03-03 14:25</span>
@@ -197,12 +197,19 @@
 
            <script>
                 document.querySelectorAll(".delete-btn").forEach(btn =>{
-                    btn.addEventListener("click" , function(){
-                        const id = this.dataset.id;
-                        console.log(id)
-                        fetch('/boards/' + id, {
+                    btn.addEventListener("click" , async (e)=>{
+                        const id = e.currentTarget.dataset.id;
+
+                        const res = await fetch('/boards/' + id, {
                             method:'DELETE'
-                        }).then(()=> location.href ='/boards');
+                        });
+                        if(!res.ok){
+                          const message = await res.text();
+                          alert(message)
+                        }
+                        else{
+                          location.href= '/boards';
+                        }
                     });
                 });
             </script>

@@ -2,6 +2,8 @@ package com.train.notice.domain.board.entity_dto;
 
 import java.time.LocalDateTime;
 
+import com.train.notice.domain.member.entity_dto.Member;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,7 +15,7 @@ public class BoardDto {
         private String name;
         private String content;
         private LocalDateTime createTime;
-        private String poster;
+        private Member writer;
 
         public static BoardDto from (Board board){
                 return BoardDto.builder()
@@ -21,7 +23,7 @@ public class BoardDto {
                         .name(board.getName())
                         .content(board.getContent())
                         .createTime(board.getCreateTime())
-                        .poster(board.getPoster())
+                        .writer(board.getWriter())
                         .build();
         }
 }
